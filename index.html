@@ -39,12 +39,15 @@
   }
 
   .intro {
-    min-height: 100vh;
-    min-height: 100svh;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    height: 100svh;
     display: flex;
     flex-direction: column;
     justify-content: center;
     padding: clamp(3rem, 8vw, 6rem) 0;
+    z-index: 0;
   }
 
   .hero {
@@ -94,6 +97,10 @@
 
   /* ---------- Collage ---------- */
   .collage {
+    position: relative;
+    z-index: 1;
+    background: var(--bg);
+    padding-top: clamp(2rem, 5vw, 4rem);
     padding-bottom: clamp(4rem, 9vw, 7rem);
     column-count: 3;
     column-gap: clamp(0.7rem, 1.4vw, 1.1rem);
