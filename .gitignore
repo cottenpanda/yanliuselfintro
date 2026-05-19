@@ -1,0 +1,7 @@
+.DS_Store
+# Source masters — keep local only (compressed .mp4 versions are committed)
+*.MOV
+*.mov
+*.MP4
+!*.mp4
+_playlist-extra.bak
