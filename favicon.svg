@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <style>
+    .bg { fill: #fbfbf9; }
+    .ch { fill: #1a1a1a; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #121212; }
+      .ch { fill: #f0efe9; }
+    }
+  </style>
+  <rect class="bg" width="32" height="32" rx="3"/>
+  <text class="ch"
+        x="50%" y="52%"
+        text-anchor="middle"
+        dominant-baseline="central"
+        font-family='"PingFang SC", "Noto Sans CJK SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif'
+        font-size="22"
+        font-weight="600">彦</text>
+</svg>
