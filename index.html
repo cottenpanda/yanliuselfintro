@@ -114,6 +114,7 @@
   }
 
   .tile:hover video { transform: scale(1.012); }
+  .tile { will-change: transform; }
 
   @media (max-width: 980px) { .collage { column-count: 2; } }
   @media (max-width: 560px) { .collage { column-count: 1; } }
@@ -282,6 +283,55 @@
         root.setAttribute("data-theme", next);
         localStorage.setItem("theme", next);
       });
+    })();
+
+    /* ---------- Parallax for video tiles ---------- */
+    (function () {
+      var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (reduce) return;
+      var tiles = [].slice.call(document.querySelectorAll(".tile"));
+      if (!tiles.length) return;
+
+      // Per-tile speed multipliers. Small magnitudes keep motion subtle.
+      // Mix of negatives (drift up faster) and positives (lag behind scroll).
+      var SPEEDS = [-0.03, 0.04, -0.025, 0.035, -0.03, 0.02, -0.028, 0.04];
+      tiles.forEach(function (t, i) {
+        t.dataset.speed = SPEEDS[i % SPEEDS.length];
+      });
+
+      var visible = new Set();
+      var pio = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) visible.add(e.target);
+          else visible.delete(e.target);
+        });
+      }, { rootMargin: "200px 0px" });
+      tiles.forEach(function (t) { pio.observe(t); });
+
+      var ticking = false;
+      function update() {
+        ticking = false;
+        var vh = window.innerHeight;
+        visible.forEach(function (t) {
+          var rect = t.getBoundingClientRect();
+          var center = rect.top + rect.height / 2;
+          var dist = center - vh / 2;
+          var speed = parseFloat(t.dataset.speed) || 0;
+          var offset = dist * speed;
+          if (offset > 28) offset = 28;
+          if (offset < -28) offset = -28;
+          t.style.transform = "translate3d(0," + offset.toFixed(2) + "px,0)";
+        });
+      }
+      function onScroll() {
+        if (!ticking) {
+          ticking = true;
+          requestAnimationFrame(update);
+        }
+      }
+      window.addEventListener("scroll", onScroll, { passive: true });
+      window.addEventListener("resize", onScroll);
+      update();
     })();
 
     (function () {
