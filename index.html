@@ -334,17 +334,22 @@
           if (offset > 28) offset = 28;
           if (offset < -28) offset = -28;
 
-          // Focal scale (mobile only): 1.0 at viewport center, 0.85 at edges
+          // Focal scale + opacity fade (mobile only):
+          // 1.0 / 1.0 at viewport center → 0.75 / 0.55 at edges.
           var scale = 1;
+          var opacity = 1;
           if (isMobile) {
             var maxDist = vh / 2 + rect.height / 2;
             var prog = Math.min(1, Math.abs(dist) / maxDist);
-            scale = 1 - prog * 0.15;
-            if (scale < 0.85) scale = 0.85;
+            scale = 1 - prog * 0.25;
+            if (scale < 0.75) scale = 0.75;
+            opacity = 1 - prog * 0.45;
+            if (opacity < 0.55) opacity = 0.55;
           }
 
           t.style.transform =
             "translate3d(0," + offset.toFixed(2) + "px,0) scale(" + scale.toFixed(3) + ")";
+          t.style.opacity = opacity.toFixed(3);
         });
       }
       function onScroll() {
