@@ -509,6 +509,12 @@
       h1.addEventListener("click", function () {
         morphTo(state === "name" ? "role" : "name");
       });
+
+      // On mobile (no hover), auto-play the swap once after load so visitors see it.
+      if (window.matchMedia("(max-width: 560px)").matches) {
+        setTimeout(function () { morphTo("role"); }, 1600);
+        setTimeout(function () { morphTo("name"); }, 4400);
+      }
     })();
 
   </script>
