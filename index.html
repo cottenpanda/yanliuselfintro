@@ -293,19 +293,22 @@
       });
     })();
 
-    /* ---------- Parallax for video tiles ---------- */
+    /* ---------- Parallax + mobile focal-scale for video tiles ---------- */
     (function () {
       var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       if (reduce) return;
       var tiles = [].slice.call(document.querySelectorAll(".tile"));
       if (!tiles.length) return;
 
-      // Per-tile speed multipliers. Small magnitudes keep motion subtle.
-      // Mix of negatives (drift up faster) and positives (lag behind scroll).
+      // Per-tile speed multipliers for parallax. Small magnitudes keep motion subtle.
       var SPEEDS = [-0.03, 0.04, -0.025, 0.035, -0.03, 0.02, -0.028, 0.04];
       tiles.forEach(function (t, i) {
         t.dataset.speed = SPEEDS[i % SPEEDS.length];
       });
+
+      var mobileMQ = window.matchMedia("(max-width: 560px)");
+      var isMobile = mobileMQ.matches;
+      mobileMQ.addEventListener("change", function (e) { isMobile = e.matches; onScroll(); });
 
       var visible = new Set();
       var pio = new IntersectionObserver(function (entries) {
@@ -323,12 +326,25 @@
         visible.forEach(function (t) {
           var rect = t.getBoundingClientRect();
           var center = rect.top + rect.height / 2;
-          var dist = center - vh / 2;
+          var dist = center - vh / 2; // signed: negative above center, positive below
+
+          // Parallax translate
           var speed = parseFloat(t.dataset.speed) || 0;
           var offset = dist * speed;
           if (offset > 28) offset = 28;
           if (offset < -28) offset = -28;
-          t.style.transform = "translate3d(0," + offset.toFixed(2) + "px,0)";
+
+          // Focal scale (mobile only): 1.0 at viewport center, 0.85 at edges
+          var scale = 1;
+          if (isMobile) {
+            var maxDist = vh / 2 + rect.height / 2;
+            var prog = Math.min(1, Math.abs(dist) / maxDist);
+            scale = 1 - prog * 0.15;
+            if (scale < 0.85) scale = 0.85;
+          }
+
+          t.style.transform =
+            "translate3d(0," + offset.toFixed(2) + "px,0) scale(" + scale.toFixed(3) + ")";
         });
       }
       function onScroll() {
