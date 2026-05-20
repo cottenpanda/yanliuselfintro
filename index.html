@@ -341,10 +341,10 @@
           if (isMobile) {
             var maxDist = vh / 2 + rect.height / 2;
             var prog = Math.min(1, Math.abs(dist) / maxDist);
-            scale = 1 - prog * 0.25;
-            if (scale < 0.75) scale = 0.75;
-            opacity = 1 - prog * 0.45;
-            if (opacity < 0.55) opacity = 0.55;
+            scale = 1 - prog * 0.4;
+            if (scale < 0.6) scale = 0.6;
+            opacity = 1 - prog * 0.7;
+            if (opacity < 0.3) opacity = 0.3;
           }
 
           t.style.transform =
