@@ -63,6 +63,8 @@
     --bg: #fbfbf9;
     --body-text: #2e2e2e;
     --border: #d8d8d2;
+    --cd-coral: #d2776a;
+    --card: #ffffff;
   }
 
   :root[data-theme="dark"] {
@@ -71,6 +73,7 @@
     --bg: #121212;
     --body-text: #cfcfca;
     --border: #3a3a38;
+    --card: #1d1d1d;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -155,9 +158,13 @@
 
   /* ---------- Collage ---------- */
   .collage {
-    position: relative;
+    position: sticky;
+    top: 0;
     z-index: 1;
     background: var(--bg);
+    min-height: 100vh;
+    min-height: 100svh;
+    overflow: hidden;
     padding-top: clamp(2rem, 5vw, 4rem);
     padding-bottom: clamp(4rem, 9vw, 7rem);
     column-count: 3;
@@ -233,6 +240,202 @@
 
   @media (prefers-reduced-motion: reduce) {
     .swap { transform: none !important; }
+  }
+
+  /* ---------- Playground: spin-to-play CD ---------- */
+  .playground {
+    position: sticky;
+    top: 0;
+    min-height: 100vh;
+    min-height: 100svh;
+    z-index: 2;
+    background: var(--bg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(1.4rem, 4vw, 2.4rem);
+    padding: clamp(2.5rem, 7vw, 5rem) clamp(1.5rem, 5vw, 4rem);
+    overflow: hidden;
+  }
+  .player {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: min(88vw, calc(100vw - 68px), 400px);
+    background: #ffffff;
+    border: none;
+    border-radius: 20px;
+    padding: 14px 24px 6px;
+    padding-left: clamp(112px, 30vw, 134px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.14);
+  }
+
+  /* album art overhangs the card: larger than it, sitting on the left edge */
+  .player-art {
+    position: absolute;
+    left: clamp(-48px, -6.5vw, -32px);
+    top: 50%;
+    transform: translateY(-50%);
+    width: clamp(126px, 34vw, 158px);
+    height: clamp(126px, 34vw, 158px);
+    border-radius: 50%;
+    overflow: hidden;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.3);
+  }
+  .player-art .art-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    animation: cdspin 7s linear infinite;
+    animation-play-state: paused;
+  }
+  .player.is-playing .art-img { animation-play-state: running; }
+  .player-art .art-hole {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 24px;
+    height: 24px;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: var(--bg);
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.15);
+  }
+  @keyframes cdspin { to { transform: rotate(360deg); } }
+
+  .player-body { flex: 1 1 auto; min-width: 0; }
+  .player-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .player-title {
+    font-family: ui-monospace, "SF Mono", "Menlo", "Monaco", "Cascadia Code", "Roboto Mono", monospace;
+    font-size: clamp(0.82rem, 1.8vw, 0.92rem);
+    font-weight: 400;
+    color: #1a1a1a;
+    line-height: 1.2;
+  }
+  .player-sub {
+    font-family: ui-monospace, "SF Mono", "Menlo", "Monaco", "Cascadia Code", "Roboto Mono", monospace;
+    font-size: clamp(0.66rem, 1.5vw, 0.75rem);
+    font-weight: 400;
+    color: #6b6b6b;
+    margin-top: 2px;
+  }
+
+  .icon-btn {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    color: #9a9a9a;
+    cursor: pointer;
+    padding: 2px 0;
+    border-radius: 50%;
+    transition: color 0.2s ease;
+  }
+  .icon-btn:hover { color: #1a1a1a; }
+  .icon-btn svg { width: 18px; height: 18px; display: block; }
+
+  .progress {
+    position: relative;
+    height: 5px;
+    margin: 16px 6px 7px 0;
+    background: #e7e7e2;
+    border-radius: 999px;
+    cursor: pointer;
+    touch-action: none;
+  }
+  .progress-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 0%;
+    min-width: 6px;
+    background: #1a1a1a;
+    border-radius: 999px;
+  }
+  .progress-fill::after {
+    content: "";
+    position: absolute;
+    left: 100%;
+    top: 50%;
+    width: 12px;
+    height: 12px;
+    transform: translate(-50%, -50%);
+    background: #1a1a1a;
+    border-radius: 50%;
+  }
+
+  .controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .ctrl {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    color: #1a1a1a;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 50%;
+    transition: transform 0.15s ease, color 0.2s ease;
+  }
+  .ctrl:hover { transform: scale(1.06); }
+  .ctrl svg { width: 20px; height: 20px; display: block; fill: currentColor; }
+  .ctrl.play svg { width: 27px; height: 27px; }
+  /* hearts flank the play button, aligned to the timeline ends */
+  .ctrl.heart { padding: 4px 0; }
+  .ctrl.heart svg {
+    fill: currentColor;
+    stroke: none;
+  }
+  #heartLeft { margin-left: -4px; }
+  .ctrl:focus-visible,
+  .icon-btn:focus-visible,
+  .progress:focus-visible { outline: 2px solid #1a1a1a; outline-offset: 3px; }
+
+  /* ---------- Mobile: no sticky cover effect, player stacked below videos ---------- */
+  @media (max-width: 640px) {
+    /* one cover only: hero stays pinned, video + player scroll up over it together */
+    .collage { position: relative; min-height: 0; }
+    .playground {
+      position: relative;
+      min-height: 0;
+      overflow: visible;
+      padding: clamp(3rem, 10vw, 4.5rem) 1.25rem clamp(4rem, 14vw, 6rem);
+    }
+    .player {
+      flex-direction: column;
+      width: min(88vw, 360px);
+      padding: clamp(92px, 25vw, 108px) 22px 16px;
+    }
+    .player .progress { margin: 12px 6px 6px 0; }
+    /* album sits outside, centered on top of the card */
+    .player-art {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: clamp(152px, 44vw, 188px);
+      height: clamp(152px, 44vw, 188px);
+      margin: 0;
+    }
+    .player-body { width: 100%; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .player .art-img { animation: none !important; }
   }
 </style>
 </head>
@@ -336,6 +539,50 @@
         <video data-src="flower.mp4" muted loop playsinline preload="none" aria-label="Generative flower animation by Yan Liu"></video>
       </figure>
     </div>
+
+    <section class="playground" aria-label="Now playing: a message from Yan">
+    <div class="player" id="player">
+      <div class="player-art">
+        <img class="art-img" src="alblum%20cover.jpg" alt="Album cover: a chrome safety pin spelling 'design' with charms" loading="lazy" />
+        <span class="art-hole"></span>
+      </div>
+      <div class="player-body">
+        <div class="player-top">
+          <div class="player-meta">
+            <p class="player-title">Message</p>
+            <p class="player-sub">From Yan</p>
+          </div>
+          <button class="icon-btn" id="muteBtn" type="button" aria-label="Mute">
+            <svg class="ic-vol-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M11 5 6 9H3v6h3l5 4z" />
+              <path d="M15.5 8.5a5 5 0 0 1 0 7" />
+              <path d="M18.5 6a8 8 0 0 1 0 12" />
+            </svg>
+            <svg class="ic-vol-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:none">
+              <path d="M11 5 6 9H3v6h3l5 4z" />
+              <path d="M22 9l-6 6M16 9l6 6" />
+            </svg>
+          </button>
+        </div>
+        <div class="progress" id="progress" role="slider" aria-label="Seek" tabindex="0" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="controls">
+          <button class="ctrl heart" id="heartLeft" type="button" aria-label="Love" aria-pressed="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.3 4.2 12.4a4.6 4.6 0 0 1 0-6.5 4.6 4.6 0 0 1 6.5 0l1.3 1.3 1.3-1.3a4.6 4.6 0 0 1 6.5 0 4.6 4.6 0 0 1 0 6.5z" /></svg>
+          </button>
+          <button class="ctrl play" id="playBtn" type="button" aria-label="Play">
+            <svg class="ic-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
+            <svg class="ic-pause" viewBox="0 0 24 24" aria-hidden="true" style="display:none"><path d="M7 5h4v14H7zM13 5h4v14h-4z" /></svg>
+          </button>
+          <button class="ctrl heart" id="heartRight" type="button" aria-label="Love" aria-pressed="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.3 4.2 12.4a4.6 4.6 0 0 1 0-6.5 4.6 4.6 0 0 1 6.5 0l1.3 1.3 1.3-1.3a4.6 4.6 0 0 1 6.5 0 4.6 4.6 0 0 1 0 6.5z" /></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    <audio id="cdAudio" src="message.m4a" preload="auto"></audio>
+    </section>
   </div>
 
   <script>
@@ -570,6 +817,130 @@
         setTimeout(function () { morphTo("role"); }, 300);
         setTimeout(function () { morphTo("name"); }, 2400);
       }
+    })();
+
+    /* ---------- Now-playing: click to play, album art spins while playing ---------- */
+    (function () {
+      var player = document.getElementById("player");
+      var audio = document.getElementById("cdAudio");
+      var playBtn = document.getElementById("playBtn");
+      var muteBtn = document.getElementById("muteBtn");
+      var progress = document.getElementById("progress");
+      var fill = document.getElementById("progressFill");
+      if (!player || !audio) return;
+
+      var icPlay = playBtn.querySelector(".ic-play");
+      var icPause = playBtn.querySelector(".ic-pause");
+      var icVolOn = muteBtn.querySelector(".ic-vol-on");
+      var icVolOff = muteBtn.querySelector(".ic-vol-off");
+
+      // Pause the background collage videos during playback so the audio
+      // doesn't break up from decode/CPU contention; resume when it ends.
+      var collageVideos = [].slice.call(document.querySelectorAll(".tile video"));
+      var pausedByPlayer = [];
+      var quieted = false;
+      function quietCollage() {
+        if (quieted) return;
+        quieted = true;
+        pausedByPlayer = [];
+        collageVideos.forEach(function (v) {
+          if (!v.paused) { pausedByPlayer.push(v); v.pause(); }
+        });
+      }
+      function resumeCollage() {
+        quieted = false;
+        pausedByPlayer.forEach(function (v) {
+          var p = v.play();
+          if (p && p.catch) p.catch(function () {});
+        });
+        pausedByPlayer = [];
+      }
+
+      function setPlayingUI(on) {
+        player.classList.toggle("is-playing", on);
+        icPlay.style.display = on ? "none" : "";
+        icPause.style.display = on ? "" : "none";
+        playBtn.setAttribute("aria-label", on ? "Pause" : "Play");
+      }
+
+      playBtn.addEventListener("click", function () {
+        if (audio.paused) {
+          quietCollage();
+          var p = audio.play();
+          if (p && p.catch) p.catch(function () {});
+        } else {
+          audio.pause();
+        }
+      });
+      muteBtn.addEventListener("click", function () {
+        audio.muted = !audio.muted;
+        icVolOn.style.display = audio.muted ? "none" : "";
+        icVolOff.style.display = audio.muted ? "" : "none";
+        muteBtn.setAttribute("aria-label", audio.muted ? "Unmute" : "Mute");
+      });
+
+      // Hearts: a little "love" toggle, both fill together.
+      var hearts = [].slice.call(document.querySelectorAll(".ctrl.heart"));
+      var liked = false;
+      hearts.forEach(function (h) {
+        h.addEventListener("click", function () {
+          liked = !liked;
+          hearts.forEach(function (x) {
+            x.classList.toggle("liked", liked);
+            x.setAttribute("aria-pressed", liked ? "true" : "false");
+          });
+        });
+      });
+
+      audio.addEventListener("play", function () { setPlayingUI(true); });
+      audio.addEventListener("pause", function () { setPlayingUI(false); });
+      audio.addEventListener("ended", function () { setPlayingUI(false); resumeCollage(); });
+
+      var progRaf = null;
+      function paintProgress() {
+        if (!audio.duration) return;
+        var pct = (audio.currentTime / audio.duration) * 100;
+        fill.style.width = pct.toFixed(2) + "%";
+        progress.setAttribute("aria-valuenow", Math.round(pct));
+      }
+      function progressLoop() {
+        paintProgress();
+        progRaf = (!audio.paused && !audio.ended) ? requestAnimationFrame(progressLoop) : null;
+      }
+      audio.addEventListener("play", function () {
+        if (progRaf == null) progRaf = requestAnimationFrame(progressLoop);
+      });
+      audio.addEventListener("pause", function () {
+        if (progRaf) { cancelAnimationFrame(progRaf); progRaf = null; }
+        paintProgress();
+      });
+      audio.addEventListener("ended", paintProgress);
+      audio.addEventListener("seeked", paintProgress);
+      audio.addEventListener("timeupdate", function () { if (audio.paused) paintProgress(); });
+
+      function seekTo(clientX) {
+        var r = progress.getBoundingClientRect();
+        var ratio = (clientX - r.left) / r.width;
+        ratio = Math.max(0, Math.min(1, ratio));
+        if (audio.duration) audio.currentTime = ratio * audio.duration;
+      }
+      progress.addEventListener("pointerdown", function (e) {
+        e.preventDefault();
+        seekTo(e.clientX);
+        try { progress.setPointerCapture(e.pointerId); } catch (err) {}
+        function move(ev) { seekTo(ev.clientX); }
+        function up() {
+          progress.removeEventListener("pointermove", move);
+          progress.removeEventListener("pointerup", up);
+        }
+        progress.addEventListener("pointermove", move);
+        progress.addEventListener("pointerup", up);
+      });
+      progress.addEventListener("keydown", function (e) {
+        if (!audio.duration) return;
+        if (e.key === "ArrowRight") { audio.currentTime = Math.min(audio.duration, audio.currentTime + 1); e.preventDefault(); }
+        else if (e.key === "ArrowLeft") { audio.currentTime = Math.max(0, audio.currentTime - 1); e.preventDefault(); }
+      });
     })();
 
   </script>
